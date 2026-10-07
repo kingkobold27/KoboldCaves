@@ -1,5 +1,5 @@
 import socket
-
+from concurrent.futures import ThreadPoolExecutor
 
 def scan_port(target, port):
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -17,27 +17,35 @@ def scan_port(target, port):
  
 
 def scan_ports(target, portA, portB):
-    totalPorts = portB - portA
+    total_ports = portB - portA
     open_ports = []
     close_ports = []
 
-    for port in range(portA, portB):
+    futures = []
 
-        result = scan_port(target, port)
+    with ThreadPoolExecutor(max_workers=10) as executor:
 
-        if result:
-            print(port, "Open Port")
-            open_ports.append(port)
-        else:
-            print(port, "Closed Port")
-            close_ports.append(port)
+        for port in range(portA, portB):
 
-    print("----------------------------------------------------------------------")
-    print("Total Ports: ", totalPorts)
-    print("Closed Ports: ", len(close_ports))
-    print("Opened Ports: ", len(open_ports))
+            future = executor.submit(scan_port, target, port)
+            futures.append((port, future))
 
-    print("Open Port List:", open_ports)
+        for port, future in futures:
+            result = future.result()
+
+            if result:
+                print(port, "Open Port")
+                open_ports.append(port)
+            else:
+                print(port, "Closed Port")
+                close_ports.append(port)
+
+        print("----------------------------------------------------------------------")
+        print("Total Ports: ", total_ports)
+        print("Closed Ports: ", len(close_ports))
+        print("Opened Ports: ", len(open_ports))
+
+        print("Open Port List:", open_ports)
 
 
 
