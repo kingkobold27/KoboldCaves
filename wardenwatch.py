@@ -47,10 +47,15 @@ def scan_ports(target, portA, portB):
 
         print("Open Port List:", open_ports)
 
+def interactive():
+    ip = input("Enter IP to scan: ")
+    port1 = int(input("Enter the port you want to start scanning from: "))
+    port2 = int(input("Enter the port you want to stop scanning at: "))
+    scan_ports(ip, port1, port2)
 
 
 
 def main():
-    scan_ports("127.0.0.1", 1, 9999)
+    interactive()
 
 main()
