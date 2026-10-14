@@ -1,5 +1,5 @@
-from wardenwatch import *
-from idenicode import *
+from port_scans import *
+from server_ports import *
 
 def main():
     interactive()

@@ -3,7 +3,7 @@ from concurrent.futures import ThreadPoolExecutor
 import time
 import ipaddress
 import errno
-from idenicode import get_service_name
+from server_ports import get_service_name
 
 def scan_port(target, port):
     # Notes for me:
