@@ -1,4 +1,4 @@
 # WardenWatch
 Network Security Assessment Toolkit
 
-WardenWatch is a modular Python-based network security assessment toolkit designed to discover hosts, enumerate network services, identify common security weaknesses, and generate structured security reports.
+This is the grand beginning of my toolkit for my cybersecurity career. What will be added here will be a collection of tools and projects that I have worked on. 
