@@ -2,6 +2,7 @@ import socket
 from concurrent.futures import ThreadPoolExecutor
 import time
 import ipaddress
+import errno
 
 def scan_port(target, port):
     # Notes for me:
@@ -16,8 +17,13 @@ def scan_port(target, port):
         result = sock.connect_ex((target, port))
         #creates TCP connection to the address and the port which i want to connect
 
-        return result == 0
+        if result == 0:
         #returns if the it connection works (opened vs closed)
+            return "open"
+        elif result == errno.ECONNREFUSED:
+            return "closed"
+        else:
+            return "filtered_or_error"
        
         
  
@@ -29,6 +35,7 @@ def scan_ports(target, portA, portB):
     #empty array for opened ports
     closed_ports = []
     #empty array for closed ports
+    other_ports = []
 
     futures = []
     #empty array for tuples to be added
@@ -52,13 +59,15 @@ def scan_ports(target, portA, portB):
             result = future.result()
             #the result is the the future's result of the execute, in this case the scan_port function
 
-            if result: #IF TRUE 
+            if result == "open": #IF TRUE 
                 print(port, "Open Port")
                 open_ports.append(port)
                 #print the port, that it is open, and append the port to the open_ports array
-            else:
+            elif result == "closed":
                 closed_ports.append(port)
                 #closed ports added to closed_ports array
+            else:
+                other_ports.append(port)
 
     elapsed_time = time.perf_counter() - start_time
     #time it took to do the process and below prints it
@@ -69,8 +78,21 @@ def scan_ports(target, portA, portB):
     print("Range: ", portA, "-", portB-1)
     print("Closed Ports: ", len(closed_ports))
     print("Opened Ports: ", len(open_ports))
+    print("Filtered or Error Ports: ", len(other_ports))
+
 
     print("Open Port List:", open_ports)
+
+    ans = input("Would the user like to see the closed (y/n) ")
+    if ans.lower() == "y":
+        print(closed_ports)
+
+    ans = input("Would the user like to see the filtered or errored ports? (y/n) ")
+    if ans.lower() == "y":
+        print(other_ports)
+    
+    
+    print("\nGoodbye!")    
     
 
 def interactive():
