@@ -3,6 +3,7 @@ from concurrent.futures import ThreadPoolExecutor
 import time
 import ipaddress
 import errno
+from idenicode import get_service_name
 
 def scan_port(target, port):
     # Notes for me:
@@ -83,7 +84,13 @@ def scan_ports(target, portA, portB):
 
     print("Open Port List:", open_ports)
 
-    ans = input("Would the user like to see the closed (y/n) ")
+    ans = input("Would the user like to see the open services? (y/n) ")
+    if ans.lower() == "y":
+        for p in open_ports:
+            print(p, get_service_name(p))
+            
+
+    ans = input("Would the user like to see the closed ports (y/n) ")
     if ans.lower() == "y":
         print(closed_ports)
 
@@ -135,7 +142,7 @@ def interactive():
 
 
 
-def main():
-    interactive()
+#def main():
+#   interactive()
 #run it
-main()
+#main()
