@@ -1,6 +1,7 @@
 import socket
 from concurrent.futures import ThreadPoolExecutor
 import time
+import ipaddress
 
 def scan_port(target, port):
     # Notes for me:
@@ -76,17 +77,37 @@ def interactive():
     
     while True:
         ip = input("Enter IP to scan: ")
-        port1 = int(input("Enter the port you want to start scanning from: "))
-        port2 = int(input("Enter the port you want to stop scanning at: "))
+        try:
+            ipaddress.IPv4Address(ip)
+            break
+        except ValueError:
+            print("Invalid IP Address")
+            continue
+    while True:
+
+        while True:
+            try:
+                port1 = int(input("Enter the port you want to start scanning from: "))
+                break
+            except ValueError:
+                print("Port must be an Integer")
+                continue
+        while True:
+            try:
+                port2 = int(input("Enter the port you want to stop scanning at: "))
+                break
+            except ValueError:
+                print("Port must be an Integer")
+                continue
         #asks for the IP and port range
         if 1 <= port1 <= 65535 and 1 <= port2 <= 65535 and port1 < port2:
             #checks that the port numbers are in the acceptable range and that port 1 is smaller than port 2
             break 
         else:
-            print("Invalid Argument. Out of Port Range.")
+            print("Port Range is Invalid.")
             #if ports not valid 
             continue
-            
+                
     scan_ports(ip, port1, port2)
     #run scan_ports
 
