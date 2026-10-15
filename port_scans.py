@@ -27,6 +27,27 @@ def scan_port(target, port):
             return "filtered_or_error"
        
         
+def grab_banner(target, port):
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+        sock.settimeout(1)
+        result = sock.connect_ex((target, port))
+        if result == 0:
+            if port in (8080, 80, 8000):
+                request = f"GET / HTTP/1.1\r\nHost: {target}\r\nConnection: close\r\n\r\n"
+                request_bytes = request.encode()
+                sock.sendall(request_bytes)
+            try:
+                banner = sock.recv(1024).decode()
+                if not banner:
+                    banner = "N/A"
+            except socket.timeout:
+                banner = "N/A"
+            except UnicodeDecodeError:
+                banner = "N/A"
+        else:
+            banner = "N/A"
+            
+        return banner
  
 
 def scan_ports(target, portA, portB):
@@ -97,6 +118,11 @@ def scan_ports(target, portA, portB):
     ans = input("Would the user like to see the filtered or errored ports? (y/n) ")
     if ans.lower() == "y":
         print(other_ports)
+
+    ans = input("Would the user like to see the banner of each open port? (y/n) ")
+    if ans.lower() == "y":
+        for p in open_ports:
+            print(p, grab_banner(target, p))
     
     
     print("\nGoodbye!")    
@@ -136,6 +162,7 @@ def interactive():
             print("Port Range is Invalid.")
             #if ports not valid 
             continue
+        
                 
     scan_ports(ip, port1, port2)
     #run scan_ports
